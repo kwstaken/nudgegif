@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fullscreen Nudge GIF</title>
+  <style>
+    /* Reset */
+    html,body{height:100%;margin:0;background:#000}
+
+    /* Container that shows the GIF full-bleed */
+    .bg {
+      position:fixed;
+      inset:0; /* top:0;right:0;bottom:0;left:0 */
+      background-image: url('nudgegif.gif');
+      background-size: cover; /* cover whole screen */
+      background-position: center center;
+      background-repeat: no-repeat;
+      z-index: 1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    /* img fallback (keeps aspect ratio while covering) */
+    .bg img { 
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    /* Simple controls that disappear after entering fullscreen */
+    .controls {
+      position:fixed;
+      z-index: 5;
+      right:16px;
+      top:16px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    .btn {
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding:8px 12px;
+      border-radius:8px;
+      cursor:pointer;
+      backdrop-filter: blur(4px);
+      font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    }
+
+    .btn:active{transform:scale(0.98)}
+
+    .hint {
+      position:fixed;
+      left:16px;
+      bottom:16px;
+      color:rgba(255,255,255,0.85);
+      font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      font-size:14px;
+      z-index:5;
+    }
+
+    /* hide controls once in fullscreen for an immersive experience */
+    :fullscreen .controls, :fullscreen .hint { display:none }
+  </style>
+</head>
+<body>
+  <div class="bg" id="bg">
+    <!-- img fallback in case background-image is blocked; keep it in the DOM so browsers can prefetch -->
+    <img src="nudgegif.gif" alt="nudge gif" aria-hidden="true" />
+  </div>
+
+  <div class="controls" id="controls">
+    <button class="btn" id="enterFs">Enter Fullscreen</button>
+    <button class="btn" id="pause">Pause (toggle)</button>
+    <button class="btn" id="close">Close</button>
+  </div>
+
+  <div class="hint" id="hint">Tip: press Esc to exit fullscreen</div>
+
+  <script>
+    // Elements
+    const bg = document.getElementById('bg');
+    const enterFs = document.getElementById('enterFs');
+    const pause = document.getElementById('pause');
+    const closeBtn = document.getElementById('close');
+    const img = bg.querySelector('img');
+
+    // Toggle fullscreen (user gesture required by most browsers)
+    enterFs.addEventListener('click', async () => {
+      try {
+        if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+      } catch (e) {
+        console.warn('Fullscreen request failed:', e);
+      }
+    });
+
+    // Pause/Play: GIFs cannot be paused reliably across browsers, so we swap to a paused PNG if provided.
+    // If you want a real toggle, replace "nudgegif.gif" with an HTML5 <video> element (MP4/webm) instead.
+    let isPaused = false;
+    const gifSrc = 'nudgegif.gif';
+    const stillSrc = 'nudgegif_still.png'; // optional — create an exported still frame named this if you want pause to work
+
+    pause.addEventListener('click', () => {
+      if (!isPaused) {
+        // attempt to show still image (only works if stillSrc exists)
+        img.src = stillSrc;
+        isPaused = true;
+        pause.textContent = 'Play';
+      } else {
+        img.src = gifSrc;
+        isPaused = false;
+        pause.textContent = 'Pause (toggle)';
+      }
+    });
+
+    // Close hides the GIF container (useful if you embed this in a page)
+    closeBtn.addEventListener('click', () => {
+      bg.style.display = 'none';
+      document.getElementById('controls').style.display = 'none';
+      document.getElementById('hint').style.display = 'none';
+    });
+
+    // If user hits Esc and leaves fullscreen, keep controls visible (handled automatically) — nothing special needed.
+
+    // Accessibility: allow Enter key on focused buttons
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.fullscreenElement) {
+        document.exitFullscreen().catch(()=>{});
+      }
+    });
+
+    // Optional: auto-enter fullscreen if the browser allowed it (rare without a gesture)
+    // window.addEventListener('load', async () => {
+    //   try { await document.documentElement.requestFullscreen(); } catch(e){}
+    // });
+
+    // NOTE for GitHub Pages: put this file and "nudgegif.gif" (and optional still PNG) in the same repo/folder.
+    // Then enable GitHub Pages for the repo (or push to the gh-pages branch) and open the page.
+  </script>
+</body>
+</html>
