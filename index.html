@@ -1,115 +1,33 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Fullscreen GIF Player</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Nudge - Idle Screen">
+  <title>Idle - Nudge</title>
+  <link rel="stylesheet" href="style.css">
   <style>
-    html,body{height:100%;margin:0;background:#000}
-
-    .bg {
-      position:fixed;
-      inset:0;
-      background-image: url('PLAYME.gif');
-      background-size: cover;
-      background-position: center center;
-      background-repeat: no-repeat;
-      z-index: 1;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+    /* Fullscreen Paula GIF */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background: #000; /* black background for contrast */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer; /* show pointer so user knows it’s clickable */
     }
 
-    .bg img { 
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
+    .PLAYME-gif-fullscreen {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
-
-    .controls {
-      position:fixed;
-      z-index: 5;
-      right:16px;
-      top:16px;
-      display:flex;
-      gap:8px;
-      align-items:center;
-    }
-
-    .btn {
-      background: rgba(255,255,255,0.15);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.2);
-      padding:8px 12px;
-      border-radius:8px;
-      cursor:pointer;
-      backdrop-filter: blur(4px);
-      font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
-    }
-
-    .btn:active{transform:scale(0.98)}
-
-    .hint {
-      position:fixed;
-      left:16px;
-      bottom:16px;
-      color:rgba(255,255,255,0.85);
-      font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
-      font-size:14px;
-      z-index:5;
-    }
-
-    :fullscreen .controls, :fullscreen .hint { display:none }
   </style>
 </head>
-<body>
-  <div class="bg" id="bg">
-    <img src="PLAYME.gif" alt="gif" aria-hidden="true" />
-  </div>
-
-  <div class="controls" id="controls">
-    <button class="btn" id="enterFs">Enter Fullscreen</button>
-    <button class="btn" id="pause">Pause (toggle)</button>
-    <button class="btn" id="close">Close</button>
-  </div>
-
-  <div class="hint" id="hint">Tip: press Esc to exit fullscreen</div>
-
-  <script>
-    const bg = document.getElementById('bg');
-    const enterFs = document.getElementById('enterFs');
-    const pause = document.getElementById('pause');
-    const closeBtn = document.getElementById('close');
-    const img = bg.querySelector('img');
-
-    enterFs.addEventListener('click', async () => {
-      if (!document.fullscreenElement) {
-        try { await document.documentElement.requestFullscreen(); } catch(e){}
-      }
-    });
-
-    let isPaused = false;
-    const gifSrc = 'PLAYME.gif';
-    const stillSrc = 'PLAYME_still.png'; // optional if you add this file
-
-    pause.addEventListener('click', () => {
-      if (!isPaused) {
-        img.src = stillSrc; 
-        isPaused = true;
-        pause.textContent = 'Play';
-      } else {
-        img.src = gifSrc;
-        isPaused = false;
-        pause.textContent = 'Pause (toggle)';
-      }
-    });
-
-    closeBtn.addEventListener('click', () => {
-      bg.style.display = 'none';
-      document.getElementById('controls').style.display = 'none';
-      document.getElementById('hint').style.display = 'none';
-    });
-  </script>
+<body onclick="window.location.href='index.html'">
+  <img src="PLAYME.gif" alt="Nudge Companion" class="PLAYME-gif-fullscreen">
 </body>
 </html>
